@@ -251,6 +251,9 @@ make_config! {
 
         /// Admin page token |> The token used to authenticate in this very same page. Changing it here won't deauthorize the current session
         admin_token:            Pass,   true,   option;
+
+        /// Instance name |> The name of the organization used to send invites from the admin page.
+        instance_name: String, true, def, "Bitwarden_rs".to_string();
     },
 
     /// Advanced settings
