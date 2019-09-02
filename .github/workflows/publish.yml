@@ -1,0 +1,59 @@
+name: Build release image
+
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, amd64, armv6, armv7]
+        db: [sqlite, mysql]
+        os: [alpine, debian]
+        include:
+          - os: debian
+            dockerfile: Dockerfile
+          - os: alpine
+            dockerfile: Dockerfile.alpine
+        exclude:
+          # Exclude non existing alpine versions
+        - arch: aarch64
+          os: alpine
+        - arch: armv6
+          os: alpine
+        - arch: armv7
+          os: alpine
+          # Exclude following mysql builds since they are not building correctly:
+        - arch: aarch64
+          db: mysql
+        - arch: armv6
+          db: mysql
+        - arch: armv7
+          db: mysql
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v1
+    - name: Login GitHub Docker registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: docker.pkg.github.com
+        username: ${{ github.event.repository.owner.login }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build image
+      run: |
+        docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
+    - name: Push images to GitHub
+      run: |
+        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
+    - name: Login Docker Hub registry
+      uses: azure/docker-login@v1
+      with:
+        username: ${{ secrets.HUB_USERNAME }}
+        password: ${{ secrets.HUB_PASSWORD }}
+    - name: Tag and push images to Docker Hub
+      run: |
+        docker tag docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/} ${{ secrets.HUB_USERNAME }}/${{ secrets.HUB_REPO }}:${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}-${GITHUB_REF##*/}
+        docker push ${{ secrets.HUB_USERNAME }}/${{ secrets.HUB_REPO }}:${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}-${GITHUB_REF##*/}
