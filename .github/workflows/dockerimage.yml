@@ -5,16 +5,13 @@ on: [push]
 jobs:
 
   build:
- 
     runs-on: ubuntu-latest
- 
     steps:
-    - uses: actions/checkout@v1
-    - name: Build the Docker image
-      env:
-        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-      run: docker build . --file Dockerfile --tag "${DOCKER_HUB_USERNAME}/bwrs:$(date +%s)"
-    - name: Login Docker Hub
-      run: docker login -u {{ secrets.DOCKER_HUB_USERNAME }} -p {{ secrets.DOCKER_HUB_PASSWORD }}
-    - name: Docker push
-      run: docker push 
+    - uses: azure/docker-login@v1
+      with:
+        login-server: contoso.azurecr.io
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+    - run: |
+        docker build . -t vplme/bwrs:${{ github.sha }}
+        docker push vplme/bwrs:${{ github.sha }}
