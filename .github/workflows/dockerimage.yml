@@ -39,7 +39,6 @@ jobs:
         login-server: docker.pkg.github.com
         username: ${{ github.event.repository.owner.login }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - run: env
     - run: |
         docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
         docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
