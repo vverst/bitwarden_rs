@@ -6,6 +6,16 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [aarch64, amd64, armv6, armv7]
+        db: [sqlite, mysql]
+        os: [alpine, debian]
+        include:
+          - os: debian
+            dockerfile: Dockerfile
+          - os: debian
+            dockerfile: Dockerfile.alpine
     steps:
     - uses: actions/checkout@v1
     - uses: azure/docker-login@v1
@@ -13,6 +23,7 @@ jobs:
         login-server: docker.pkg.github.com
         username: vverst
         password: ${{ secrets.GITHUB_TOKEN }}
+    - run: env
     - run: |
-        docker build . -t docker.pkg.github.com/vverst/bitwarden_rs/bwrs:${{ github.sha }}
-        docker push docker.pkg.github.com/vverst/bitwarden_rs/bwrs:${{ github.sha }}
+        docker build . -f ./${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/vverst/bitwarden_rs/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os}}:${{ github.sha }}
+        docker push docker.pkg.github.com/vverst/bitwarden_rs/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os}}:${{ github.sha }}
