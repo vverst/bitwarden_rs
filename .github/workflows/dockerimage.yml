@@ -16,6 +16,13 @@ jobs:
             dockerfile: Dockerfile
           - os: alpine
             dockerfile: Dockerfile.alpine
+        exclude:
+        - arch: aarch64
+          os: alpine
+        - arch: armv6
+          os: alpine
+        - arch: armv7
+          os: alpine
     steps:
     - uses: actions/checkout@v1
     - uses: azure/docker-login@v1
