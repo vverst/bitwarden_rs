@@ -34,5 +34,5 @@ jobs:
     - run: env
     - run: |
         echo docker.pkg.github.com/${GITHUB_REPOSITORY}/test
-        docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os }}:${{ github.sha }}
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os }}:${{ github.sha }}
+        docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${{ github.sha }}
+        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${{ github.sha }}
