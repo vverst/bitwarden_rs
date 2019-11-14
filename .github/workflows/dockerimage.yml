@@ -25,5 +25,5 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - run: env
     - run: |
-        docker build . -f ./${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/vverst/bitwarden_rs/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os}}:${{ github.sha }}
-        docker push docker.pkg.github.com/vverst/bitwarden_rs/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os}}:${{ github.sha }}
+        docker build . -f ./${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os }}:${{ github.sha }}
+        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os }}:${{ github.sha }}
