@@ -14,7 +14,7 @@ jobs:
         include:
           - os: debian
             dockerfile: Dockerfile
-          - os: debian
+          - os: alpine
             dockerfile: Dockerfile.alpine
     steps:
     - uses: actions/checkout@v1
@@ -25,5 +25,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     - run: env
     - run: |
+        echo docker.pkg.github.com/${GITHUB_REPOSITORY}/test
         docker build . -f ./${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os }}:${{ github.sha }}
         docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.os }}:${{ github.sha }}
