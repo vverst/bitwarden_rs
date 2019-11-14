@@ -18,12 +18,21 @@ jobs:
           - os: alpine
             dockerfile: Dockerfile.alpine
         exclude:
+          # Exclude non existing alpine versions
         - arch: aarch64
           os: alpine
         - arch: armv6
           os: alpine
         - arch: armv7
           os: alpine
+          # Exclude following mysql builds since they are not building correctly:
+        - arch: aarch64
+          db: mysql
+        - arch: armv6
+          db: mysql
+        - arch: armv7
+          db: mysql
+
     steps:
     - uses: actions/checkout@v1
     - uses: azure/docker-login@v1
@@ -34,5 +43,5 @@ jobs:
     - run: env
     - run: |
         echo docker.pkg.github.com/${GITHUB_REPOSITORY}/test
-        docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${{ github.sha }}
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${{ github.sha }}
+        docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
+        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
