@@ -64,7 +64,7 @@ jobs:
     - uses: azure/docker-login@v1
       with:
         login-server: docker.pkg.github.com
-        username: ${{ github.repository.owner.login }}
+        username: ${{ github.event.repository.owner.login }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - run: env
     - run: |
