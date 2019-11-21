@@ -1,6 +1,9 @@
 name: Docker Build and Push
 
-on: [push]
+on:
+  push:
+    tags: 
+      - v**
 
 jobs:
   build:
