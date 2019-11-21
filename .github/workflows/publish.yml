@@ -42,16 +42,18 @@ jobs:
         login-server: docker.pkg.github.com
         username: ${{ github.event.repository.owner.login }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    - name: Build and push images to GitHub
+    - name: Build image
       run: |
         docker build . -f ./docker/${{ matrix.arch }}/${{ matrix.db }}/${{ matrix.dockerfile }} -t docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
+    - name: Push images to GitHub
+      run: |
         docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/}
     - name: Login Docker Hub registry
       uses: azure/docker-login@v1
       with:
         username: ${{ secrets.HUB_USERNAME }}
         password: ${{ secrets.HUB_PASSWORD }}
-    - name: Build and push images to Docker Hub
+    - name: Tag and push images to Docker Hub
       run: |
-        docker tag docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/} ${secrets.HUB_USERNAME}/${secrets.HUB_REPO}:${GITHUB_REF##*/}
-        docker push ${secrets.HUB_USERNAME}/${secrets.HUB_REPO}:${GITHUB_REF##*/}
+        docker tag docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/} ${{ secrets.HUB_USERNAME }}/${{ secrets.HUB_REPO }}:${GITHUB_REF##*/}
+        docker push ${{ secrets.HUB_USERNAME} }/${{ secrets.HUB_REPO }}:${GITHUB_REF##*/}
