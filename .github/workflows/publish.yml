@@ -56,4 +56,4 @@ jobs:
     - name: Tag and push images to Docker Hub
       run: |
         docker tag docker.pkg.github.com/${GITHUB_REPOSITORY}/${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}:${GITHUB_REF##*/} ${{ secrets.HUB_USERNAME }}/${{ secrets.HUB_REPO }}:${GITHUB_REF##*/}
-        docker push ${{ secrets.HUB_USERNAME }}/${{ secrets.HUB_REPO }}:${GITHUB_REF##*/}
+        docker push ${{ secrets.HUB_USERNAME }}/${{ secrets.HUB_REPO }}:${{ matrix.arch }}-${{ matrix.db }}-${{ matrix.os }}-${GITHUB_REF##*/}
